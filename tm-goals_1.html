@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TM Goals 2026</title>
+  <link href="https://api.fontshare.com/v2/css?f[]=sentient@2,1,501,500,701,700,201,200,301,300&display=swap" rel="stylesheet" />
+  <link href="https://db.onlinewebfonts.com/c/6228016f2b172c06410f3a2356d33f6c?family=Roobert-Regular" rel="stylesheet" />
+  <link href="https://db.onlinewebfonts.com/c/fdd7abd88b9d820ffbf7108209dba1ce?family=Roobert+Medium" rel="stylesheet" />
+  <link href="https://db.onlinewebfonts.com/c/d6ae884b0a2f1a5346717fc160db2d28?family=Roobert" rel="stylesheet" />
+  <style>
+    :root {
+      --hero-bg: #214037;
+      --dark-green: #03261c;
+      --green-action: #488577;
+      --green-light: #bee8ce;
+      --primary-500: #c4cfcc;
+      --primary-400: #e8eceb;
+      --primary-300: #f3f5f5;
+      --primary-200: #f8f9f9;
+      --primary-100: #fafbfb;
+      --gray-800: #3a3a3a;
+      --gray-400: #a3a3a3;
+      --gray-300: #dddbda;
+      --white: #ffffff;
+      --miss: #c0564b;
+      --miss-light: #f4dcd9;
+      --font-display: 'Sentient', Georgia, serif;
+      --font-body: 'Roobert', 'Roobert-Regular', 'Roobert Medium', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: var(--primary-400);
+      color: var(--dark-green);
+      font-family: var(--font-body);
+      padding: 32px 24px;
+    }
+
+    .container { max-width: 900px; margin: 0 auto; }
+
+    /* Header */
+    .header {
+      background: var(--hero-bg);
+      border-radius: 14px;
+      padding: 28px 32px;
+      margin-bottom: 28px;
+    }
+    .header-top { display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px; }
+    .header h1 {
+      font-family: var(--font-display);
+      font-size: 36px; font-weight: 700;
+      font-style: italic;
+      letter-spacing: -0.5px;
+      color: var(--white);
+    }
+    .header .year {
+      font-family: var(--font-display);
+      font-size: 16px; color: var(--green-light);
+      font-weight: 400; font-style: italic;
+    }
+    .header p {
+      font-size: 13px; color: var(--primary-500);
+      letter-spacing: 0.3px;
+    }
+
+    /* Summary Cards */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .card {
+      background: var(--white);
+      border: 1px solid var(--gray-300);
+      border-radius: 10px;
+      padding: 18px 14px;
+      text-align: center;
+    }
+    .card-value {
+      font-family: var(--font-body);
+      font-size: 28px; font-weight: 700;
+      line-height: 1.2;
+    }
+    .card-label {
+      font-size: 11px; color: var(--green-action);
+      margin-top: 6px; text-transform: uppercase;
+      letter-spacing: 1px; font-weight: 500;
+    }
+
+    /* Chart */
+    .chart-container {
+      background: var(--white);
+      border: 1px solid var(--gray-300);
+      border-radius: 12px;
+      padding: 24px 20px 16px;
+      margin-bottom: 24px;
+    }
+    .chart-legend {
+      display: flex; gap: 16px;
+      justify-content: flex-end;
+      margin-bottom: 16px;
+    }
+    .legend-item {
+      display: flex; align-items: center;
+      gap: 6px; font-size: 11px; color: var(--green-action);
+    }
+    .legend-dot {
+      width: 10px; height: 10px; border-radius: 2px;
+    }
+    .chart-bars {
+      display: flex; align-items: flex-end;
+      gap: 6px; height: 180px;
+    }
+    .bar-group {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; position: relative; cursor: default;
+    }
+    .bar-pair {
+      display: flex; gap: 2px; align-items: flex-end; height: 150px;
+    }
+    .bar {
+      width: 14px; border-radius: 3px 3px 0 0;
+      transition: height 0.4s ease, opacity 0.2s;
+    }
+    .bar-goal { background: var(--hero-bg); opacity: 0.75; }
+    .bar-actual-hit { background: var(--green-light); opacity: 0.85; }
+    .bar-actual-miss { background: var(--miss); opacity: 0.85; }
+    .bar-empty { background: var(--gray-300); }
+    .bar-group:hover .bar { opacity: 1; }
+    .bar-label {
+      font-size: 10px; margin-top: 6px;
+      font-family: var(--font-body);
+      color: var(--gray-400);
+      transition: color 0.2s;
+    }
+    .bar-group:hover .bar-label {
+      color: var(--hero-bg); font-weight: 700;
+    }
+    .bar-tooltip {
+      position: absolute; bottom: calc(100% + 8px);
+      background: var(--hero-bg);
+      border-radius: 6px; padding: 6px 10px;
+      font-size: 11px; white-space: nowrap;
+      color: var(--white); font-family: var(--font-body);
+      pointer-events: none; opacity: 0;
+      transition: opacity 0.15s;
+      z-index: 10;
+    }
+    .bar-group:hover .bar-tooltip { opacity: 1; }
+    .tooltip-green { color: var(--green-light); }
+    .tooltip-miss { color: var(--miss-light); }
+
+    /* Table */
+    .table-container {
+      background: var(--white);
+      border: 1px solid var(--gray-300);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr {
+      background: var(--primary-300);
+      border-bottom: 1px solid var(--gray-300);
+    }
+    th {
+      padding: 14px 16px;
+      font-size: 10px; font-weight: 700;
+      color: var(--green-action);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-family: var(--font-body);
+    }
+    th:first-child { text-align: left; }
+    th:not(:first-child) { text-align: center; }
+    tbody tr {
+      border-bottom: 1px solid var(--primary-400);
+      transition: background 0.15s;
+    }
+    tbody tr:hover { background: var(--primary-100); }
+    td { padding: 12px 16px; font-family: var(--font-body); font-size: 13px; }
+    td:first-child { font-weight: 600; color: var(--hero-bg); }
+    td:not(:first-child) { text-align: center; }
+
+    .cell-value {
+      display: inline-block; min-width: 40px;
+      padding: 4px 10px; border-radius: 4px;
+      cursor: pointer; font-family: var(--font-body);
+      font-size: 13px; font-weight: 500;
+      border: 1px solid transparent;
+      transition: border-color 0.15s;
+    }
+    .cell-value:hover { border-color: var(--primary-500); }
+    .cell-goal { color: var(--hero-bg); }
+    .cell-actual { color: var(--green-action); }
+    .cell-empty { color: var(--gray-400); background: var(--primary-200); }
+
+    .cell-input {
+      width: 60px; background: var(--primary-200);
+      border: 1px solid var(--green-action);
+      border-radius: 4px; color: var(--dark-green);
+      padding: 4px 8px; text-align: center;
+      font-size: 13px; font-family: var(--font-body);
+      outline: none;
+    }
+
+    .diff-hit { color: var(--green-action); font-weight: 600; }
+    .diff-miss { color: var(--miss); font-weight: 600; }
+    .diff-empty { color: var(--gray-400); }
+
+    .badge {
+      display: inline-block; padding: 3px 10px;
+      border-radius: 20px; font-size: 10px;
+      font-weight: 700; letter-spacing: 0.5px;
+      font-family: var(--font-body);
+    }
+    .badge-hit {
+      background: var(--green-light);
+      color: var(--hero-bg);
+      border: 1px solid var(--primary-500);
+    }
+    .badge-miss {
+      background: var(--miss-light);
+      color: var(--miss);
+      border: 1px solid #e8b4b0;
+    }
+    .badge-empty { font-size: 10px; color: var(--gray-400); }
+
+    tfoot tr {
+      border-top: 2px solid var(--gray-300);
+      background: var(--primary-300);
+    }
+    tfoot td {
+      padding: 14px 16px; font-weight: 700;
+    }
+    tfoot td:first-child {
+      font-size: 12px; color: var(--hero-bg);
+      text-transform: uppercase; letter-spacing: 1px;
+    }
+
+    /* Reset button */
+    .reset-row { text-align: right; margin-top: 24px; }
+    .reset-btn {
+      background: none; border: 1px solid var(--gray-300);
+      color: var(--gray-400); padding: 6px 14px;
+      border-radius: 6px; font-size: 11px;
+      font-family: var(--font-body);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .reset-btn:hover {
+      border-color: var(--miss); color: var(--miss);
+    }
+
+    /* Back link */
+    .back-link {
+      display: inline-block; margin-bottom: 20px;
+      font-size: 13px; color: var(--green-action);
+      text-decoration: none; font-weight: 500;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--hero-bg); }
+
+    @media (max-width: 640px) {
+      .cards { grid-template-columns: repeat(2, 1fr); }
+      .card-value { font-size: 22px; }
+      body { padding: 20px 12px; }
+      .header { padding: 20px; }
+      .header h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <a href="index.html" class="back-link">← Back to Dashboard</a>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-top">
+      <h1>TM Goals</h1>
+      <span class="year">2026</span>
+    </div>
+    <p>Units / Transactions — click any cell to edit</p>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="cards">
+    <div class="card">
+      <div class="card-value" id="total-goal" style="color: var(--hero-bg);">0</div>
+      <div class="card-label">Total Goal</div>
+    </div>
+    <div class="card">
+      <div class="card-value" id="total-actual" style="color: var(--green-action);">0</div>
+      <div class="card-label">Total Actual</div>
+    </div>
+    <div class="card">
+      <div class="card-value" id="months-set" style="color: var(--gray-800);">0/12</div>
+      <div class="card-label">Months Set</div>
+    </div>
+    <div class="card">
+      <div class="card-value" id="goals-hit" style="color: var(--hero-bg);">0/0</div>
+      <div class="card-label">Goals Hit</div>
+    </div>
+  </div>
+
+  <!-- Chart -->
+  <div class="chart-container">
+    <div class="chart-legend">
+      <div class="legend-item">
+        <div class="legend-dot" style="background: var(--hero-bg);"></div> Goal
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background: var(--green-light);"></div> Actual
+      </div>
+    </div>
+    <div class="chart-bars" id="chart"></div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Month</th><th>Goal</th><th>Actual</th><th>Diff</th><th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+      <tfoot>
+        <tr>
+          <td>Total</td>
+          <td id="foot-goal" style="color: var(--hero-bg); font-size: 14px;">0</td>
+          <td id="foot-actual" style="color: var(--green-action); font-size: 14px;">0</td>
+          <td colspan="2"></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="reset-row">
+    <button class="reset-btn" onclick="resetData()">Reset All</button>
+  </div>
+</div>
+
+<script>
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const STORAGE_KEY = "tm-goals-2026-v3";
+const DEFAULT_GOALS =   [70, 60, 60, 55, 110, null, null, null, null, null, null, null];
+const DEFAULT_ACTUALS = [54, 53, 66, 68, null, null, null, null, null, null, null, null];
+
+function getDefaultData() {
+  return MONTHS.map((m, i) => ({ month: m, goal: DEFAULT_GOALS[i], actual: DEFAULT_ACTUALS[i] }));
+}
+
+function loadData() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) return JSON.parse(saved);
+  } catch(e) {}
+  return getDefaultData();
+}
+
+function saveData(data) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
+}
+
+let data = loadData();
+let editingCell = null;
+
+function computeStats() {
+  const totalGoal = data.reduce((s, r) => s + (r.goal || 0), 0);
+  const totalActual = data.reduce((s, r) => s + (r.actual || 0), 0);
+  const monthsSet = data.filter(r => r.goal !== null).length;
+  const goalsHit = data.filter(r => r.goal && r.actual && r.actual >= r.goal).length;
+  const maxVal = Math.max(...data.map(r => Math.max(r.goal || 0, r.actual || 0)), 10);
+  return { totalGoal, totalActual, monthsSet, goalsHit, maxVal };
+}
+
+function render() {
+  const stats = computeStats();
+
+  // Cards
+  document.getElementById("total-goal").textContent = stats.totalGoal;
+  document.getElementById("total-actual").textContent = stats.totalActual;
+  document.getElementById("months-set").textContent = `${stats.monthsSet}/12`;
+  document.getElementById("goals-hit").textContent = `${stats.goalsHit}/${stats.monthsSet || 0}`;
+
+  // Footer
+  document.getElementById("foot-goal").textContent = stats.totalGoal;
+  document.getElementById("foot-actual").textContent = stats.totalActual || "—";
+
+  // Chart
+  const chart = document.getElementById("chart");
+  chart.innerHTML = "";
+  data.forEach((row, i) => {
+    const goalH = row.goal ? (row.goal / stats.maxVal) * 150 : 0;
+    const actualH = row.actual ? (row.actual / stats.maxVal) * 150 : 0;
+    const hit = row.actual && row.goal && row.actual >= row.goal;
+
+    const group = document.createElement("div");
+    group.className = "bar-group";
+
+    // Tooltip
+    let tooltipHTML = "";
+    if (row.goal !== null) tooltipHTML += `<div>Goal: <span class="tooltip-green">${row.goal}</span></div>`;
+    if (row.actual !== null) tooltipHTML += `<div>Actual: <span class="${hit ? 'tooltip-green' : 'tooltip-miss'}">${row.actual}</span></div>`;
+    if (tooltipHTML) {
+      const tooltip = document.createElement("div");
+      tooltip.className = "bar-tooltip";
+      tooltip.innerHTML = tooltipHTML;
+      group.appendChild(tooltip);
+    }
+
+    // Bars
+    const pair = document.createElement("div");
+    pair.className = "bar-pair";
+
+    const goalBar = document.createElement("div");
+    goalBar.className = `bar ${goalH ? "bar-goal" : "bar-empty"}`;
+    goalBar.style.height = (goalH || 2) + "px";
+    pair.appendChild(goalBar);
+
+    const actualBar = document.createElement("div");
+    actualBar.className = `bar ${actualH ? (hit ? "bar-actual-hit" : "bar-actual-miss") : "bar-empty"}`;
+    actualBar.style.height = (actualH || 2) + "px";
+    pair.appendChild(actualBar);
+
+    group.appendChild(pair);
+
+    const label = document.createElement("div");
+    label.className = "bar-label";
+    label.textContent = row.month;
+    group.appendChild(label);
+
+    chart.appendChild(group);
+  });
+
+  // Table
+  const tbody = document.getElementById("table-body");
+  tbody.innerHTML = "";
+  data.forEach((row, i) => {
+    const diff = (row.goal !== null && row.actual !== null) ? row.actual - row.goal : null;
+    const hit = diff !== null && diff >= 0;
+
+    const tr = document.createElement("tr");
+
+    // Month
+    tr.innerHTML = `<td>${row.month}</td>`;
+
+    // Goal cell
+    tr.appendChild(createEditableCell(i, "goal", row.goal));
+
+    // Actual cell
+    tr.appendChild(createEditableCell(i, "actual", row.actual));
+
+    // Diff
+    const diffTd = document.createElement("td");
+    diffTd.style.textAlign = "center";
+    if (diff === null) {
+      diffTd.className = "diff-empty";
+      diffTd.textContent = "—";
+    } else {
+      diffTd.className = hit ? "diff-hit" : "diff-miss";
+      diffTd.textContent = `${diff >= 0 ? "+" : ""}${diff}`;
+    }
+    tr.appendChild(diffTd);
+
+    // Status
+    const statusTd = document.createElement("td");
+    statusTd.style.textAlign = "center";
+    if (diff === null) {
+      statusTd.innerHTML = `<span class="badge-empty">—</span>`;
+    } else {
+      statusTd.innerHTML = `<span class="badge ${hit ? "badge-hit" : "badge-miss"}">${hit ? "HIT ✓" : "MISS"}</span>`;
+    }
+    tr.appendChild(statusTd);
+
+    tbody.appendChild(tr);
+  });
+}
+
+function createEditableCell(index, field, value) {
+  const td = document.createElement("td");
+  td.style.textAlign = "center";
+  td.style.padding = "8px 16px";
+
+  if (editingCell && editingCell.index === index && editingCell.field === field) {
+    const input = document.createElement("input");
+    input.type = "number";
+    input.className = "cell-input";
+    input.value = value ?? "";
+    input.addEventListener("blur", () => commitEdit(input, index, field));
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") commitEdit(input, index, field);
+      if (e.key === "Escape") { editingCell = null; render(); }
+    });
+    td.appendChild(input);
+    setTimeout(() => input.focus(), 0);
+  } else {
+    const span = document.createElement("span");
+    span.className = `cell-value ${value !== null ? (field === "goal" ? "cell-goal" : "cell-actual") : "cell-empty"}`;
+    span.textContent = value !== null ? value : "—";
+    span.addEventListener("click", () => {
+      editingCell = { index, field };
+      render();
+    });
+    td.appendChild(span);
+  }
+
+  return td;
+}
+
+function commitEdit(input, index, field) {
+  const raw = input.value.trim();
+  const val = raw === "" ? null : parseInt(raw, 10);
+  if (raw !== "" && isNaN(val)) { editingCell = null; render(); return; }
+  data[index][field] = val;
+  saveData(data);
+  editingCell = null;
+  render();
+}
+
+function resetData() {
+  if (confirm("Reset all data to defaults?")) {
+    data = getDefaultData();
+    saveData(data);
+    render();
+  }
+}
+
+render();
+</script>
+
+</body>
+</html>
